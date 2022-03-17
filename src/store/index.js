@@ -1,14 +1,34 @@
-import { createStore } from 'vuex'
+import Vue from 'vue'
+import Vuex from 'vuex'
 
-export default createStore({
+import {auth} from '@/firebase'
+import router from '@/router'
+
+Vue.use(Vuex)
+
+export default new Vuex.Store({
   state: {
-  },
-  getters: {
+    usuario: {}
   },
   mutations: {
+    nuevoUsuario(state, payload){
+      state.usuario = payload
+    }
   },
   actions: {
-  },
-  modules: {
+    setUsuario({commit}, user){
+      const usuario = {
+        nombre: user.displayName,
+        email: user.email,
+        uid: user.uid,
+        foto: user.photoURL
+      }
+      commit('nuevoUsuario', usuario)
+    },
+    cerrarSesion({commit}){
+      auth.signOut()
+      commit('nuevoUsuario', null)
+      router.push({name: 'ingreso'})
+    }
   }
 })
